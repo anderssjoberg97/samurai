@@ -1,7 +1,7 @@
 /**
  * 
  */
-package anderssjoberg97.samurai.game;
+package anderssjoberg97.samurai.util;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;

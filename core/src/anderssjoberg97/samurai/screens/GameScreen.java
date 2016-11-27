@@ -1,37 +1,49 @@
-package anderssjoberg97.samurai.game.screens;
+package anderssjoberg97.samurai.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 
-import anderssjoberg97.samurai.engine.Renderer;
-import anderssjoberg97.samurai.engine.input.InputHandler;
-import anderssjoberg97.samurai.game.worlds.World;
+import anderssjoberg97.samurai.input.InputHandler;
+import anderssjoberg97.samurai.render.Renderer;
+import anderssjoberg97.samurai.ui.UI;
+import anderssjoberg97.samurai.world.World;
 
 public class GameScreen implements Screen {
 	
 	//Represents the game world
 	private World world;
+	//HAndles UI
+	private UI ui;
+	
 	//Renders the game world
 	private Renderer renderer;
+	
+	//Handles input
+	private InputHandler inputHandler;
+	
 	//Keeps track of time for animations
 	private float runTime;
 	
 	/**
-	 * Class constructor
+	 * Creates an new screen
 	 */
 	public GameScreen(){
 		
-		float screenWidth = Gdx.graphics.getWidth();
-		float screenHeight = Gdx.graphics.getHeight();
-		float gameWidth = 136;
-		float gameHeight = screenHeight / (screenWidth / gameWidth);
+		//Create world
+		world = new World();
 		
-		world = new World(gameWidth, gameHeight);
-		renderer = new Renderer(world, gameWidth, gameHeight);
+		//Create a UI
+		ui = new UI();
 		
-		//Assign InputHandler class as inputProcessor
-		Gdx.input.setInputProcessor(new InputHandler(world));
+		//Create a renderer
+		renderer = new Renderer(world, ui);
+		
+		//Set input processor
+		inputHandler = new InputHandler(renderer.getWorldCamera(), 
+				renderer.getUiCamera(), 
+				world.getPlayer());
+		Gdx.input.setInputProcessor(inputHandler);
 	}
 	
 	/**
@@ -40,7 +52,9 @@ public class GameScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		runTime += delta;
+		inputHandler.poll();
 		world.update(delta);
+		ui.update(delta);
 		renderer.render(runTime);
 	}
 	
@@ -51,7 +65,7 @@ public class GameScreen implements Screen {
 	 */
 	@Override
 	public void resize(int width, int height) {
-		Gdx.app.log("GameScreen", "Resizing");
+		renderer.resize(width, height);
 
 	}
 	

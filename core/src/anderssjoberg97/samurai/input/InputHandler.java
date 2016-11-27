@@ -1,36 +1,78 @@
 /**
  * 
  */
-package anderssjoberg97.samurai.engine.input;
+package anderssjoberg97.samurai.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
 
-import anderssjoberg97.samurai.game.objects.characters.Player;
-import anderssjoberg97.samurai.game.worlds.World;
+import anderssjoberg97.samurai.characters.Player;
 
 /**
- * Handles input and relays it to the player class
+ * Handles input events
  * @author Anders Sjöberg
  *
  */
 public class InputHandler implements InputProcessor {
+	private OrthographicCamera camera;
+	private OrthographicCamera uiCamera;
 	
-	private World world;
 	private Player player;
 	
-	/**
-	 * Sets up input handling
-	 * @param player A player object
-	 */
-	public InputHandler(World world){
-		this.world = world;
-		player = world.getPlayer();
+	public InputHandler(OrthographicCamera camera, OrthographicCamera uiCamera, Player player){
+		this.camera = camera;
+		this.uiCamera = uiCamera;
+		this.player = player;
 	}
 	
-	/* Handles keyboard input
-	 * @param keycode Key index
-	 * @return True if input was handled
+	/**
+	 * Polls for input relays any keypresses
+	 */
+	public void poll(){
+		adjustPlayerDirection();
+	}
+	
+	/**
+	 * Changes the facing direction of the player
+	 */
+	private void adjustPlayerDirection(){
+		
+		float direction = 0.0f;
+		float differenceX = 
+				(Gdx.input.getX() - Gdx.graphics.getWidth() / 2) * 
+				camera.viewportWidth / 
+				Gdx.graphics.getWidth() +
+				camera.position.x - 
+				player.getPositionX();
+		float differenceY = (Gdx.graphics.getHeight() / 2 - Gdx.input.getY()) * 
+				camera.viewportHeight / 
+				Gdx.graphics.getHeight() + 
+				camera.position.y - 
+				player.getPositionY();
+		
+		if(differenceX == 0.0f){
+			if(differenceY >= 0.0f){
+				direction = 90f;
+			} else {
+				direction = - 90f;
+			}
+		} else {
+			if(differenceX < 0){
+				direction = (float) Math.atan(differenceY / differenceX) * 
+						180 / (float)Math.PI + 180;
+			} else {
+				direction = (float) Math.atan(differenceY / differenceX) * 
+						180 / (float) Math.PI;
+			}
+		}
+		player.setDirection(direction = direction  );
+		Gdx.app.log("InputHandler", "" + direction);
+		
+	}
+	
+	/* (non-Javadoc)
 	 * @see com.badlogic.gdx.InputProcessor#keyDown(int)
 	 */
 	@Override
@@ -57,26 +99,13 @@ public class InputHandler implements InputProcessor {
 		return false;
 	}
 
-	/* Handles clicks and touches
-	 * @param screenX X-position on screen
-	 * @param screenY Y-position on screen
-	 * @param pointer Pointer
-	 * @param button Button index code
-	 * @return True if input was handled, otherwise false
+	/* (non-Javadoc)
 	 * @see com.badlogic.gdx.InputProcessor#touchDown(int, int, int, int)
 	 */
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		if(world.isReady()){
-			world.start();
-		}
-		player.onClick();
-
-		if(world.isGameOver()){
-			
-			world.restart();
-		}
-		return true;
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	/* (non-Javadoc)
