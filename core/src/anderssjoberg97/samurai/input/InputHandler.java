@@ -31,45 +31,19 @@ public class InputHandler implements InputProcessor {
 	 * Polls for input relays any keypresses
 	 */
 	public void poll(){
-		adjustPlayerDirection();
-	}
-	
-	/**
-	 * Changes the facing direction of the player
-	 */
-	private void adjustPlayerDirection(){
 		
-		float direction = 0.0f;
-		float differenceX = 
+		//Set player facing direction
+		player.setFacingDirection(
 				(Gdx.input.getX() - Gdx.graphics.getWidth() / 2) * 
-				camera.viewportWidth / 
-				Gdx.graphics.getWidth() +
-				camera.position.x - 
-				player.getPositionX();
-		float differenceY = (Gdx.graphics.getHeight() / 2 - Gdx.input.getY()) * 
-				camera.viewportHeight / 
-				Gdx.graphics.getHeight() + 
-				camera.position.y - 
-				player.getPositionY();
-		
-		if(differenceX == 0.0f){
-			if(differenceY >= 0.0f){
-				direction = 90f;
-			} else {
-				direction = - 90f;
-			}
-		} else {
-			if(differenceX < 0){
-				direction = (float) Math.atan(differenceY / differenceX) * 
-						180 / (float)Math.PI + 180;
-			} else {
-				direction = (float) Math.atan(differenceY / differenceX) * 
-						180 / (float) Math.PI;
-			}
-		}
-		player.setDirection(direction = direction  );
-		Gdx.app.log("InputHandler", "" + direction);
-		
+					camera.viewportWidth / 
+					Gdx.graphics.getWidth() + 
+					camera.position.x
+				,
+				(Gdx.graphics.getHeight() / 2 - Gdx.input.getY()) * 
+					camera.viewportHeight / 
+					Gdx.graphics.getHeight() + 
+					camera.position.y
+				);
 	}
 	
 	/* (non-Javadoc)
@@ -99,13 +73,24 @@ public class InputHandler implements InputProcessor {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/* Handles click and touch events
 	 * @see com.badlogic.gdx.InputProcessor#touchDown(int, int, int, int)
 	 */
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
+		//Call players clickevent
+		player.onClick(
+				(screenX - Gdx.graphics.getWidth() / 2) * 
+					camera.viewportWidth / 
+					Gdx.graphics.getWidth() + 
+					camera.position.x
+				,
+				(Gdx.graphics.getHeight() / 2 - screenY) * 
+					camera.viewportHeight / 
+					Gdx.graphics.getHeight() + 
+					camera.position.y
+				, button);
+		return true;
 	}
 
 	/* (non-Javadoc)

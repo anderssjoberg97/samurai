@@ -32,7 +32,7 @@ public class World {
 	 * @param inputHandler
 	 */
 	public World(){
-		player = new Player(50, 50);
+		player = new Player(this, 50, 50);
 		
 		currentState = GameState.RUNNING;
 	}

@@ -48,6 +48,9 @@ public class Renderer {
 	private SpriteBatch batch;
 	private SpriteBatch uiBatch;
 	
+	//Shaperenderer
+	private ShapeRenderer shapeRenderer;
+	
 	
 	
 	
@@ -91,6 +94,10 @@ public class Renderer {
 		batch = new SpriteBatch();
 		uiBatch = new SpriteBatch();
 		uiBatch.setProjectionMatrix(uiCamera.combined);
+		
+		//Set up shape renderer
+		shapeRenderer = new ShapeRenderer();
+		shapeRenderer.setProjectionMatrix(camera.combined);
 	}
 	
 	/**
@@ -116,7 +123,9 @@ public class Renderer {
 		map.draw(batch);
 		batch.enableBlending();
 		player.getSprite().draw(batch);
+		player.render(batch);
 		batch.end();
+		
 		
 		//Draw UI
 		uiBatch.begin();

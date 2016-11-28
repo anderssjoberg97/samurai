@@ -3,11 +3,19 @@
  */
 package anderssjoberg97.samurai.characters;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+
+import anderssjoberg97.samurai.gadgets.Gadget;
+import anderssjoberg97.samurai.gadgets.Hook;
+import anderssjoberg97.samurai.util.MathUtil;
+import anderssjoberg97.samurai.world.World;
 
 /**
  * 
@@ -16,6 +24,9 @@ import com.badlogic.gdx.math.Vector2;
  *
  */
 public class Player {
+	//World object
+	World world;
+	
 	//Center position
 	private Vector2 position;
 	//Velocity
@@ -27,17 +38,24 @@ public class Player {
 	//Player sprite texture
 	private Sprite sprite;
 	
+	//Gadgets and weapons
+	private ArrayList<Gadget> gadgets;
+	private Hook hook;
+	
 	/**
 	 * Creates a new player
 	 */
-	public Player(float positionX, float positionY){
+	public Player(World world, float positionX, float positionY){
+		this.world = world;
+		
 		position = new Vector2(positionX, positionY);
-		direction = 0;
+		facingDirection = 0;
 		sprite = new Sprite(new Texture(Gdx.files.internal("player/player-main.png")));
 		sprite.setSize(5, 5);
 		sprite.setOriginCenter();
 		sprite.setCenter(position.x, position.y);
 		
+		hook = new Hook(this.world, this);
 		
 	}
 	
@@ -46,9 +64,20 @@ public class Player {
 	 * @param delta Delta-time
 	 */
 	public void update(float delta){
+		hook.update(delta);
 		movement(delta);
 		sprite.setCenter(position.x, position.y);
-		sprite.setRotation(direction);
+		sprite.setRotation(facingDirection);
+		
+		
+	}
+	
+	/**
+	 * Renders the player and gadgets
+	 * @param batch SpriteBatch helper
+	 */
+	public void render(SpriteBatch batch){
+		hook.render(batch);
 	}
 	
 	/**
@@ -76,10 +105,30 @@ public class Player {
 	}
 	
 	/**
+	 * Handles click events. 
+	 * Like using weapons and gadgets
+	 * @param worldX Mouse world x-coordinates
+	 * @param worldY Mouse world y-coordinates
+	 * @param button Mouse button index code
+	 */
+	public void onClick(float worldX, float worldY, int button){
+		hook.fire(worldX, worldY);
+	}
+	
+	/**
 	 * Adjusts player facing direction
 	 */
 	public void setFacingDirection(float facingDirection){
 		this.facingDirection = facingDirection;
+	}
+	
+	/**
+	 * Adjusts player facing direction based on mouse world coordinates
+	 * @param worldX Mouse world x-coordinates
+	 * @param worldY Mouse wolrd y-coordinates
+	 */
+	public void setFacingDirection(float worldX, float worldY){
+		facingDirection = MathUtil.angle(position, worldX, worldY);
 	}
 	
 	/**
