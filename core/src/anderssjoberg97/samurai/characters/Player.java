@@ -20,8 +20,10 @@ public class Player {
 	private Vector2 position;
 	//Velocity
 	private Vector2 velocity;
+	//Walking direction
+	private float movingDirection;
 	//Direction which the player is facing
-	private float direction;
+	private float facingDirection;
 	//Player sprite texture
 	private Sprite sprite;
 	
@@ -76,8 +78,8 @@ public class Player {
 	/**
 	 * Adjusts player facing direction
 	 */
-	public void setDirection(float direction){
-		this.direction = direction;
+	public void setFacingDirection(float facingDirection){
+		this.facingDirection = facingDirection;
 	}
 	
 	/**
