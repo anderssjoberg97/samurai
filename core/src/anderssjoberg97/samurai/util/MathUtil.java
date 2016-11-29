@@ -21,7 +21,6 @@ public class MathUtil {
 	public static float angle(Vector2 vector1, Vector2 vector2){
 		float differenceX = vector2.x - vector1.x;
 		float differenceY = vector2.y - vector1.y;
-		Gdx.app.log("MathUtil", "Vector diff x " + differenceX);
 		if(differenceX == 0.0f){
 			if(differenceY >= 0.0f){
 				return 90f;

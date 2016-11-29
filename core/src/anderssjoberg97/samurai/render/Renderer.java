@@ -3,6 +3,8 @@
  */
 package anderssjoberg97.samurai.render;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -16,6 +18,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import anderssjoberg97.samurai.characters.Player;
+import anderssjoberg97.samurai.collision.Hookable;
 import anderssjoberg97.samurai.ui.UI;
 import anderssjoberg97.samurai.util.AssetLoader;
 import anderssjoberg97.samurai.world.World;
@@ -50,6 +53,7 @@ public class Renderer {
 	
 	//Shaperenderer
 	private ShapeRenderer shapeRenderer;
+	private ShapeRenderer uiShapeRenderer;
 	
 	
 	
@@ -98,6 +102,8 @@ public class Renderer {
 		//Set up shape renderer
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(camera.combined);
+		uiShapeRenderer = new ShapeRenderer();
+		uiShapeRenderer.setProjectionMatrix(uiCamera.combined);
 	}
 	
 	/**
@@ -109,6 +115,7 @@ public class Renderer {
 				player.getPositionY(), 0);
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
+		shapeRenderer.setProjectionMatrix(camera.combined);
 		
 		//Update UI matrix
 		
@@ -126,11 +133,24 @@ public class Renderer {
 		player.render(batch);
 		batch.end();
 		
+		shapeRenderer.begin(ShapeType.Filled);
+		shapeRenderer.setColor(Color.RED);
+		for(ArrayList<ArrayList<Hookable>> hookableList : world.getHookables()){
+			for(ArrayList<Hookable> hookables : hookableList){
+				for(Hookable hookable : hookables){
+					hookable.render(shapeRenderer);
+				}
+			}
+		}
+		shapeRenderer.end();
+		
 		
 		//Draw UI
 		uiBatch.begin();
 		ui.getCursorSprite().draw(uiBatch);
 		uiBatch.end();
+		
+		
 	}
 	
 	/**

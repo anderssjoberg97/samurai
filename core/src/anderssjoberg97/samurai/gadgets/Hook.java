@@ -3,6 +3,9 @@
  */
 package anderssjoberg97.samurai.gadgets;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -10,6 +13,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 import anderssjoberg97.samurai.characters.Player;
+import anderssjoberg97.samurai.collision.CollisionUtil;
+import anderssjoberg97.samurai.collision.Hookable;
 import anderssjoberg97.samurai.util.MathUtil;
 import anderssjoberg97.samurai.world.World;
 
@@ -93,6 +98,14 @@ public class Hook implements Gadget {
 	public void update(float delta){
 		if(hookState == HookState.SHOOTING){
 			if(length < range - shootingSpeed * delta){
+				
+				checkForCollision(new Vector2(farEnd.x, farEnd.y), 
+						new Vector2(nearEnd.x + 
+						(float)Math.cos(angle * 180 / Math.PI) * 
+						(length + shootingSpeed * delta), 
+						nearEnd.y + 
+						(float)Math.sin(angle * 180 / Math.PI) * 
+						(length + shootingSpeed * delta)));
 				length += shootingSpeed * delta;
 			} else if(length >= range - shootingSpeed * delta){
 				delta -= (range - length) / shootingSpeed;
@@ -111,8 +124,8 @@ public class Hook implements Gadget {
 			}
 		}
 		if(hookState != HookState.RETRACTED){
-			farEnd.x = (float)Math.cos(angle * 180 / Math.PI) * length;
-			farEnd.y = (float)Math.sin(angle * 180 / Math.PI) * length;
+			farEnd.x = nearEnd.x + (float)Math.cos(angle * 180 / Math.PI) * length;
+			farEnd.y = nearEnd.y + (float)Math.sin(angle * 180 / Math.PI) * length;
 			ropeSprite.setRotation(angle);
 			ropeSprite.setPosition(nearEnd.x, nearEnd.y);
 			ropeSprite.setSize(length, thickness);
@@ -139,6 +152,26 @@ public class Hook implements Gadget {
 		if(hookState != HookState.RETRACTED){
 			ropeSprite.draw(batch);
 		}
+	}
+	
+	/**
+	 * Checks if hook has hit anything
+	 * @param thisFrame Position in the current frame
+	 * @param nextFrame Position in the next frame
+	 * @return Returns the a Hookable object if colliding, otherwise null
+	 */
+	private Hookable checkForCollision(Vector2 thisFrame, Vector2 nextFrame){
+		ArrayList<ArrayList<ArrayList<Hookable>>> hookables = world.getHookables();
+		
+		System.out.println(CollisionUtil.getChunks(thisFrame, nextFrame).size());
+		for(Integer[] chunk : CollisionUtil.getChunks(thisFrame, nextFrame)){
+			for(Hookable hookable : hookables.get(chunk[0]).get(chunk[1])){
+				Gdx.app.log("Hook", 
+						"Hookable object" + hookable.getX() + " " + hookable.getY());
+			}
+		}
+		
+		return null;
 	}
 	
 	/**
