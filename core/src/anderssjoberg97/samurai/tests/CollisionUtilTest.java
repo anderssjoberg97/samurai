@@ -14,30 +14,13 @@ public class CollisionUtilTest {
 
 	@Test
 	public void testGetChunksCrossingHorizontally() {
-		Vector2 vector1 = new Vector2(47.870106f, 57.761486f);
-		Vector2 vector2 = new Vector2(48.14224f, 57.761486f);
-		Vector2 vector3 = new Vector2(47.870106f, 56.0828f);
-		Vector2 vector4 = new Vector2(48.14224f, 56.0828f);
+		Vector2 vector1 = new Vector2(50.0f, 50.0f);
+		Vector2 vector2 = new Vector2(48.641712f, 48.97342f);
 		
-		ArrayList<Integer[]> chunks1 = CollisionUtil.getChunks(vector1, vector4);
-		assertEquals(2, chunks1.size());
+		ArrayList<Integer[]> chunks1 = CollisionUtil.getChunks(vector1, vector2);
+		assertEquals(1, chunks1.size());
 		assertArrayEquals(new Integer[]{5,7}, chunks1.get(0));
 		assertArrayEquals(new Integer[]{6,7}, chunks1.get(1));
-		
-		ArrayList<Integer[]> chunks2 = CollisionUtil.getChunks(vector4, vector1);
-		assertEquals(2, chunks2.size());
-		assertArrayEquals(new Integer[]{6,7}, chunks2.get(0));
-		assertArrayEquals(new Integer[]{5,7}, chunks2.get(1));
-	
-		ArrayList<Integer[]> chunks3 = CollisionUtil.getChunks(vector2, vector3);
-		assertEquals(2, chunks3.size());
-		assertArrayEquals(new Integer[]{6,7}, chunks3.get(0));
-		assertArrayEquals(new Integer[]{5,7}, chunks3.get(1));
-		
-		ArrayList<Integer[]> chunks4 = CollisionUtil.getChunks(vector3, vector2);
-		assertEquals(2, chunks4.size());
-		assertArrayEquals(new Integer[]{5,7}, chunks4.get(0));
-		assertArrayEquals(new Integer[]{6,7}, chunks4.get(1));
 	}
 	
 	@Test

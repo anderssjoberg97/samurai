@@ -37,4 +37,12 @@ public class UI {
 	public Sprite getCursorSprite(){
 		return cursor.getSprite();
 	}
+	
+	/**
+	 * Disposes UI elements
+	 */
+	public void dispose() {
+		cursor.dispose();
+		
+	}
 }

@@ -20,8 +20,6 @@ public class Samurai extends Game {
 	 */
 	@Override
 	public void create(){
-		//Loadtextures
-		AssetLoader.load();
 		//Set game screen
 		setScreen(new GameScreen());
 	}
@@ -32,6 +30,5 @@ public class Samurai extends Game {
 	@Override
 	public void dispose(){
 		super.dispose();
-		AssetLoader.dispose();
 	}
 }

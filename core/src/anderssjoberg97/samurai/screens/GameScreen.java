@@ -111,7 +111,8 @@ public class GameScreen implements Screen {
 	 */
 	@Override
 	public void dispose() {
-		Gdx.app.log("GameScreen", "Dispose called");
+		world.dispose();
+		renderer.dispose();
 
 	}
 

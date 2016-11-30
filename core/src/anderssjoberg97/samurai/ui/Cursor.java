@@ -43,4 +43,12 @@ public class Cursor {
 	public Sprite getSprite(){
 		return sprite;
 	}
+	
+	/**
+	 * Disposes cursor
+	 */
+	public void dispose() {
+		sprite.getTexture().dispose();
+		
+	}
 }

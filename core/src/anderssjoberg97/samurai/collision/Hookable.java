@@ -43,4 +43,20 @@ public class Hookable {
 	public float getY(){
 		return rectangle.y;
 	}
+	
+	/**
+	 * Gets the width of the hookable object
+	 * @return Width of object
+	 */
+	public float getWidth(){
+		return rectangle.width;
+	}
+	
+	/**
+	 * Gets the height of the hookable object
+	 * @return Height of object
+	 */
+	public float getHeight(){
+		return rectangle.height;
+	}
 }

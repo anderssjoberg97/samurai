@@ -162,4 +162,14 @@ public class Player {
 	public Sprite getSprite(){
 		return sprite;
 	}
+	
+	/**
+	 * Disposes player
+	 */
+	public void dispose() {
+		sprite.getTexture().dispose();
+		
+		hook.dispose();
+		
+	}
 }

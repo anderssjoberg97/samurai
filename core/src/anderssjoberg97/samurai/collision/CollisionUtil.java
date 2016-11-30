@@ -25,8 +25,6 @@ public class CollisionUtil {
 	 * @return A hashset with all the chunks
 	 */
 	public static ArrayList<Integer[]> getChunks(Vector2 vector1, Vector2 vector2){
-		System.out.println("Start " + vector1.x + " " + vector1.y);
-		System.out.println("End " + vector2.x + " " + vector2.y);
 		//Declare an ArrayList which will store passed chunks
 		ArrayList<Integer[]> chunks = new ArrayList<Integer[]>();
 		//Start and end chunk
@@ -39,6 +37,7 @@ public class CollisionUtil {
 		
 		//Return if startchunk and endchunk are the same
 		if(startChunk[0] == endChunk[0] && startChunk[1] == endChunk[1]){
+			chunks.add(startChunk);
 			return chunks;
 		}
 		//If line never passes a vertical border of chunk
@@ -93,9 +92,6 @@ public class CollisionUtil {
 			
 			//Calculate where line hits this border
 			int lineHitChunkY;
-			System.out.println("new angle" + angle);
-			System.out.println("Distance " + (Math.tan(angle * Math.PI / 180) * 
-					distanceToVerticalBorder));
 			float yDistance = (float)(Math.tan(angle * Math.PI / 180) * 
 					distanceToVerticalBorder);
 			if(traverseUp){
@@ -105,7 +101,6 @@ public class CollisionUtil {
 				lineHitChunkY = (int)((vector1.y - yDistance) / 
 						World.CHUNK_SIZE);
 			}
-			System.out.println(lineHitChunkY);
 			
 			//Add all chunks from chunk with currentY as y-value
 			//to chunk with linHitChunkY as Y-value
@@ -143,7 +138,6 @@ public class CollisionUtil {
 				--currentX;
 			}
 		}
-		System.out.println("-----------");
 		return chunks;
 	}
 }

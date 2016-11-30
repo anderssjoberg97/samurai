@@ -52,7 +52,9 @@ public class World {
 			}
 		}
 		
-		hookables.get(3).get(3).add(new Hookable(20, 20, 10, 10));
+		hookables.get(2).get(2).add(new Hookable(16, 16, 4, 4));
+		hookables.get(2).get(2).add(new Hookable(21, 16, 1, 4));
+		hookables.get(4).get(2).add(new Hookable(32, 16, 1, 1));
 		
 		currentState = GameState.RUNNING;
 	}
@@ -116,6 +118,13 @@ public class World {
 	 */
 	public void restart(){
 		currentState = GameState.READY;
+	}
+	
+	/**
+	 * Disposes world objects
+	 */
+	public void dispose(){
+		player.dispose();
 	}
 	
 	/**

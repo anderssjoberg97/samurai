@@ -73,8 +73,8 @@ public class Hook implements Gadget {
 	 */
 	public Hook(World world, Player player){
 		//Semi-constants
-		range = 20;
-		shootingSpeed = 100;
+		range = 4;
+		shootingSpeed = 30;
 		pullingSpeed = 30;
 		thickness = 0.1f;
 		
@@ -85,6 +85,7 @@ public class Hook implements Gadget {
 		
 		ropeSprite = new Sprite(new Texture(Gdx.files.internal("gadgets/hook/rope.png")));
 		ropeSprite.setSize(length, thickness);
+		ropeSprite.setOrigin(0, thickness / 2);
 		ropeSprite.setPosition(player.getPositionX(), player.getPositionY());
 		
 		
@@ -99,14 +100,18 @@ public class Hook implements Gadget {
 		if(hookState == HookState.SHOOTING){
 			if(length < range - shootingSpeed * delta){
 				
-				checkForCollision(new Vector2(farEnd.x, farEnd.y), 
+				Hookable hookable = checkForCollision(new Vector2(farEnd.x, farEnd.y), 
 						new Vector2(nearEnd.x + 
 						(float)Math.cos(angle * 180 / Math.PI) * 
 						(length + shootingSpeed * delta), 
 						nearEnd.y + 
 						(float)Math.sin(angle * 180 / Math.PI) * 
 						(length + shootingSpeed * delta)));
-				length += shootingSpeed * delta;
+				if(hookable != null){
+					
+				} else{
+					length += shootingSpeed * delta;
+				}
 			} else if(length >= range - shootingSpeed * delta){
 				delta -= (range - length) / shootingSpeed;
 				length = range;
@@ -141,7 +146,6 @@ public class Hook implements Gadget {
 			ropeSprite.setSize(length, thickness);
 			hookState = HookState.SHOOTING;
 		}
-		Gdx.app.log("Hook", "Fire called");
 	}
 	
 	/**
@@ -161,13 +165,29 @@ public class Hook implements Gadget {
 	 * @return Returns the a Hookable object if colliding, otherwise null
 	 */
 	private Hookable checkForCollision(Vector2 thisFrame, Vector2 nextFrame){
-		ArrayList<ArrayList<ArrayList<Hookable>>> hookables = world.getHookables();
+		System.out.println(thisFrame.dst(nextFrame));
+		ArrayList<ArrayList<ArrayList<Hookable>>> allHookables = world.getHookables();
 		
-		System.out.println(CollisionUtil.getChunks(thisFrame, nextFrame).size());
-		for(Integer[] chunk : CollisionUtil.getChunks(thisFrame, nextFrame)){
-			for(Hookable hookable : hookables.get(chunk[0]).get(chunk[1])){
-				Gdx.app.log("Hook", 
-						"Hookable object" + hookable.getX() + " " + hookable.getY());
+		ArrayList<Integer[]> chunks = CollisionUtil.getChunks(thisFrame, nextFrame);
+		
+		System.out.println(chunks.get(0)[0] + " " + chunks.get(0)[1]);
+		
+		for(int chunkIndex = 0; chunkIndex < chunks.size(); ++chunkIndex){
+			ArrayList<Hookable> hookables = 
+					allHookables.get(chunks.get(chunkIndex)[0]).
+					get(chunks.get(chunkIndex)[1]);
+			if(chunks.get(chunkIndex)[0] == 2 && chunks.get(chunkIndex)[1] == 2){
+				System.out.println("Size at 2x2 " + hookables.size());
+			}
+			for(Hookable hookable : hookables){
+				System.out.println("In chunk: " + hookable.getX() + " " + hookable.getY());
+				if(nextFrame.x >= hookable.getX() && 
+						nextFrame.x <= hookable.getX() + hookable.getWidth() &&
+						nextFrame.y >= hookable.getY() && 
+						nextFrame.y <= hookable.getY() + hookable.getHeight()){
+					System.out.println(hookable.getX());
+					return hookable;
+				}
 			}
 		}
 		
@@ -188,5 +208,14 @@ public class Hook implements Gadget {
 	 */
 	public Vector2 getFarEnd(){
 		return farEnd;
+	}
+	
+	/**
+	 * Disposes the hook
+	 */
+	public void dispose() {
+		hookSprite.getTexture().dispose();
+		ropeSprite.getTexture().dispose();
+		
 	}
 }

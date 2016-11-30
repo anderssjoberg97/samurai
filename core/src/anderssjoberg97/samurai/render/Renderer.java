@@ -173,6 +173,23 @@ public class Renderer {
 	}
 	
 	/**
+	 * Prevents memory leaks
+	 */
+	public void dispose(){
+		map.getTexture().dispose();
+		
+		ui.dispose();
+		
+		//Dispose SpriteBatches
+		batch.dispose();;
+		uiBatch.dispose();;
+		
+		//Dispose Shaperenderer
+		shapeRenderer.dispose();
+		uiShapeRenderer.dispose();
+	}
+	
+	/**
 	 * Gets the world camera
 	 * @return The world camera
 	 */
