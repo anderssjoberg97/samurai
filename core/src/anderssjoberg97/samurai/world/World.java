@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 
 import anderssjoberg97.samurai.characters.Player;
-import anderssjoberg97.samurai.collision.Hookable;
+import anderssjoberg97.samurai.collision.Collidable;
 import anderssjoberg97.samurai.util.AssetLoader;
 
 /**
@@ -35,7 +35,7 @@ public class World {
 	Player player;
 	
 	//A hookable object
-	ArrayList<ArrayList<ArrayList<Hookable>>> hookables;
+	ArrayList<ArrayList<ArrayList<Collidable>>> hookables;
 	
 	/**
 	 * Sets up the world
@@ -44,17 +44,17 @@ public class World {
 	public World(){
 		player = new Player(this, 50, 50);
 		
-		hookables = new ArrayList<ArrayList<ArrayList<Hookable>>>();
+		hookables = new ArrayList<ArrayList<ArrayList<Collidable>>>();
 		for(int i = 0; i < Math.ceil((float)WORLD_WIDTH / CHUNK_SIZE); ++i){
-			hookables.add(new ArrayList<ArrayList<Hookable>>());
+			hookables.add(new ArrayList<ArrayList<Collidable>>());
 			for(int j = 0; j < Math.ceil((float)WORLD_HEIGHT / CHUNK_SIZE); ++j){
-				hookables.get(i).add(new ArrayList<Hookable>());
+				hookables.get(i).add(new ArrayList<Collidable>());
 			}
 		}
 		
-		hookables.get(2).get(2).add(new Hookable(16, 16, 4, 4));
-		hookables.get(2).get(2).add(new Hookable(21, 16, 1, 4));
-		hookables.get(4).get(2).add(new Hookable(32, 16, 1, 1));
+		hookables.get(2).get(2).add(new Collidable(16, 16, 4, 4));
+		hookables.get(2).get(2).add(new Collidable(21, 16, 1, 4));
+		hookables.get(4).get(2).add(new Collidable(32, 16, 1, 1));
 		
 		currentState = GameState.RUNNING;
 	}
@@ -138,7 +138,7 @@ public class World {
 	/**
 	 * Gets a hookable object
 	 */
-	public ArrayList<ArrayList<ArrayList<Hookable>>> getHookables(){
+	public ArrayList<ArrayList<ArrayList<Collidable>>> getHookables(){
 		return hookables;
 	}
 }

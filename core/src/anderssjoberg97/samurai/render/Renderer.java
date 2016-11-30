@@ -18,7 +18,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import anderssjoberg97.samurai.characters.Player;
-import anderssjoberg97.samurai.collision.Hookable;
+import anderssjoberg97.samurai.collision.Collidable;
 import anderssjoberg97.samurai.ui.UI;
 import anderssjoberg97.samurai.util.AssetLoader;
 import anderssjoberg97.samurai.world.World;
@@ -133,14 +133,21 @@ public class Renderer {
 		player.render(batch);
 		batch.end();
 		
-		shapeRenderer.begin(ShapeType.Filled);
+		shapeRenderer.begin(ShapeType.Line);
 		shapeRenderer.setColor(Color.RED);
-		for(ArrayList<ArrayList<Hookable>> hookableList : world.getHookables()){
-			for(ArrayList<Hookable> hookables : hookableList){
-				for(Hookable hookable : hookables){
+		int chunkX = 0;
+		int chunkY = 0;
+		for(ArrayList<ArrayList<Collidable>> hookableList : world.getHookables()){
+			for(ArrayList<Collidable> hookables : hookableList){
+				shapeRenderer.rect(chunkX * World.CHUNK_SIZE, chunkY * World.CHUNK_SIZE, 
+						World.CHUNK_SIZE, World.CHUNK_SIZE);
+				for(Collidable hookable : hookables){
 					hookable.render(shapeRenderer);
 				}
+				++chunkY;
 			}
+			++chunkX;
+			chunkY = 0;
 		}
 		shapeRenderer.end();
 		

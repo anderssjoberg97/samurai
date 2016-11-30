@@ -7,17 +7,17 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
 /**
- * Objects which are hookable
+ * Objects which have collision
  * @author Anders Sjöberg
  *
  */
-public class Hookable {
+public class Collidable {
 	Rectangle rectangle;
 	
 	/**
 	 * Creates a new hookable object
 	 */
-	public Hookable(float x, float y, float width, float height){
+	public Collidable(float x, float y, float width, float height){
 		rectangle = new Rectangle(x, y, width, height);
 	}
 	
@@ -45,7 +45,7 @@ public class Hookable {
 	}
 	
 	/**
-	 * Gets the width of the hookable object
+	 * Gets the width of the collidable object
 	 * @return Width of object
 	 */
 	public float getWidth(){
@@ -53,10 +53,18 @@ public class Hookable {
 	}
 	
 	/**
-	 * Gets the height of the hookable object
+	 * Gets the height of the collidable object
 	 * @return Height of object
 	 */
 	public float getHeight(){
 		return rectangle.height;
+	}
+	
+	/**
+	 * Gets the collision rectangle
+	 * @return The collision rectangle
+	 */
+	public Rectangle getRectangle(){
+		return rectangle;
 	}
 }

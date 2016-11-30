@@ -140,4 +140,10 @@ public class CollisionUtil {
 		}
 		return chunks;
 	}
+	
+	
+	public static Vector2 locateHit(Collidable hookable, Vector2 start, Vector2 end, float angle) {
+		
+		return null;
+	}
 }
