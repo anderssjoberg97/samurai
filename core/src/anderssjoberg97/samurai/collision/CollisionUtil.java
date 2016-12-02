@@ -141,8 +141,417 @@ public class CollisionUtil {
 		return chunks;
 	}
 	
-	
-	public static Vector2 locateHit(Collidable hookable, Vector2 start, Vector2 end, float angle) {
+	/**
+	 * Calculates where collidable object was hit by line, if hit.
+	 * @param collisionObject Object to check for collision with
+	 * @param start Line segment's starting point
+	 * @param end Line segment's end point
+	 * @return A Hit object if object was hit, otherwise null
+	 */
+	public static Hit calculateHit(Collidable collisionObject, Vector2 start, Vector2 end) {
+		//Line angle
+		float angle = MathUtil.angle(start, end);
+		//When line comes in from the top
+		if(start.x >= collisionObject.getX() &&
+				start.x <= collisionObject.getX() + collisionObject.getWidth() &&
+				start.y > collisionObject.getY() + collisionObject.getHeight()){
+			//If line end is not located under the upper border, object can't be hit
+			if(end.y > collisionObject.getY() + collisionObject.getHeight()){
+				return null;
+			}
+			
+			//Special case if aimed right down
+			else if(angle == 270.0f){
+				return new Hit(collisionObject, new Vector2(start.x, collisionObject.getY()));
+			}
+			//The distance to the object from the start of line
+			float distanceToObject = start.y - collisionObject.getY() - collisionObject.getHeight();
+			//Calculate the x-position of line when the 
+			//y-position is equal to objects top border y-position
+			float positionX = (float)((-1) * distanceToObject * 
+					Math.tan(angle * Math.PI / 180)) + 
+					start.x;
+			if(positionX >= collisionObject.getX() &&
+					positionX <= collisionObject.getX() + collisionObject.getWidth()){
+				Gdx.app.log("CollisionUtil", "Collision at - X: " + positionX + 
+						" Y: " + (collisionObject.getY() + collisionObject.getHeight()));
+				return new Hit(collisionObject, 
+						new Vector2(positionX, 
+								collisionObject.getY() + collisionObject.getHeight()
+						));
+			} else {
+				return null;
+			}
+		}
+		
+		//When coming in from the top right side
+		else if(start.x > collisionObject.getX() + collisionObject.getWidth() &&
+				start.y > collisionObject.getY() + collisionObject.getHeight()){
+			//If line end is outside object on top or right side
+			//object can't be hit
+			if(end.x > collisionObject.getX() + collisionObject.getWidth() ||
+				end.y > collisionObject.getY() + collisionObject.getHeight()){
+				return null;
+			}
+			//Check 
+			float startToCornerAngle = MathUtil.angle(start, 
+					collisionObject.getX() + collisionObject.getWidth(), 
+					collisionObject.getY() + collisionObject.getHeight());
+			//If line angle and angle from start point to corner
+			//is equal, then line hits the corner
+			if(angle == startToCornerAngle ){
+				return new Hit(collisionObject, new Vector2(
+						collisionObject.getX() + collisionObject.getWidth(),
+						collisionObject.getY() + collisionObject.getHeight()));
+			} 
+			//When line angle is smaller than the angle from
+			//start point to corner then line must hit the top of the object
+			else if(angle < startToCornerAngle){
+				//The distance to the objects y position from start point
+				float distanceToObject = start.y - collisionObject.getY() - collisionObject.getHeight();
+				
+				//Calculate the x-position of line when the 
+				//y-position is equal to objects top border y-position
+				float positionX = (float)((-1) * distanceToObject * 
+						Math.tan(angle * Math.PI / 180)) + 
+						start.x;
+				if(positionX >= collisionObject.getX() &&
+						positionX <= collisionObject.getX() + collisionObject.getWidth()){
+					Gdx.app.log("CollisionUtil", "Collision at - X: " + positionX + 
+							" Y: " + (collisionObject.getY() + collisionObject.getHeight()));
+					return new Hit(collisionObject, 
+							new Vector2(positionX, 
+									collisionObject.getY() + collisionObject.getHeight()
+							));
+				} else {
+					return null;
+				}
+			}
+			//When line angle is bigger than the angle from
+			//start point to corner then line must hit the right side of object
+			else{
+				//The distance to the objects x position from start point
+				float distanceToObject = start.x - collisionObject.getX() - collisionObject.getWidth();
+				
+				//Calculate the y-position of line when the 
+				//x-position is equal to objects right border x-position
+				float positionY = (float)((-1) * distanceToObject * 
+						Math.tan(angle * Math.PI / 180)) + 
+						start.y;
+				if(positionY >= collisionObject.getY() &&
+						positionY <= collisionObject.getY() + collisionObject.getHeight()){
+					Gdx.app.log("CollisionUtil", "Collision at - X: " + 
+							(collisionObject.getX() + collisionObject.getWidth()) + 
+							" Y: " + positionY);
+					return new Hit(collisionObject, 
+							new Vector2(collisionObject.getX() + collisionObject.getWidth(), 
+									positionY));
+				} else {
+					return null;
+				}
+			}
+		}
+		//When line comes in from the right
+		else if(start.y >= collisionObject.getY() &&
+				start.y <= collisionObject.getY() + collisionObject.getHeight() &&
+				start.x > collisionObject.getX() + collisionObject.getWidth()){
+			//If line end is not located on the left 
+			//of the right border, object can't be hit
+			if(end.x > collisionObject.getX() + collisionObject.getWidth()){
+				return null;
+			}
+			
+			//The distance to the objects x position from start point
+			float distanceToObject = start.x - collisionObject.getX() - collisionObject.getWidth();
+			
+			//Calculate the x-position of line when the 
+			//y-position is equal to objects y-position
+			float positionY = (float)((-1) * distanceToObject * 
+					Math.tan(angle * Math.PI / 180)) + 
+					start.y;
+			System.out.println("Position y " + positionY);
+			if(positionY >= collisionObject.getY() &&
+					positionY <= collisionObject.getY() + collisionObject.getHeight()){
+				Gdx.app.log("CollisionUtil", "Collision at - X: " + 
+						(collisionObject.getX() + collisionObject.getWidth()) + 
+						" Y: " + positionY);
+				return new Hit(collisionObject, 
+						new Vector2(collisionObject.getX() + collisionObject.getWidth(), 
+								positionY));
+			} else {
+				return null;
+			}
+		}
+		
+		//When coming in from the bottom right side
+		else if(start.x > collisionObject.getX() + collisionObject.getWidth() &&
+				start.y < collisionObject.getY()){
+			//If line end is outside object on bottom or right side
+			//object can't be hit
+			if(end.x > collisionObject.getX() + collisionObject.getWidth() ||
+				end.y < collisionObject.getY()){
+				return null;
+			}
+			//Check 
+			float startToCornerAngle = MathUtil.angle(start, 
+					collisionObject.getX() + collisionObject.getWidth(), 
+					collisionObject.getY());
+			//If line angle and angle from start point to corner
+			//is equal, then line hits the corner
+			if(angle == startToCornerAngle){
+				return new Hit(collisionObject, new Vector2(
+						collisionObject.getX() + collisionObject.getWidth(),
+						collisionObject.getY()));
+			} 
+			//When line angle is bigger than the angle from
+			//start point to corner then line must hit the bottom of the object
+			else if(angle > startToCornerAngle){
+				//The distance to the objects y position from start point
+				float distanceToObject =  collisionObject.getY() - start.y;
+				
+				//Calculate the x-position of line when the 
+				//y-position is equal to objects top border y-position
+				float positionX = (float)(distanceToObject * 
+						Math.tan(angle * Math.PI / 180)) + 
+						start.x;
+				if(positionX >= collisionObject.getX() &&
+						positionX <= collisionObject.getX() + collisionObject.getWidth()){
+					Gdx.app.log("CollisionUtil", "Collision at - X: " + positionX + 
+							" Y: " + (collisionObject.getY()));
+					return new Hit(collisionObject, 
+							new Vector2(positionX, 
+									collisionObject.getY()));
+				} else {
+					return null;
+				}
+			}
+			//When line angle is smaller than the angle from
+			//start point to corner then line must hit the right side of object
+			else{
+				//The distance to the objects x position from start point
+				float distanceToObject = start.x - collisionObject.getX() - collisionObject.getWidth();
+				
+				//Calculate the y-position of line when the 
+				//x-position is equal to objects right border x-position
+				float positionY = (float)((-1) * distanceToObject * 
+						Math.tan(angle * Math.PI / 180)) + 
+						start.y;
+				if(positionY >= collisionObject.getY() &&
+						positionY <= collisionObject.getY() + collisionObject.getHeight()){
+					Gdx.app.log("CollisionUtil", "Collision at - X: " + 
+							(collisionObject.getX() + collisionObject.getWidth()) + 
+							" Y: " + positionY);
+					return new Hit(collisionObject, 
+							new Vector2(collisionObject.getX() + collisionObject.getWidth(), 
+									positionY));
+				} else {
+					return null;
+				}
+			}
+		}
+		
+		//When line comes in from the bottom
+		else if(start.x >= collisionObject.getX() &&
+				start.x <= collisionObject.getX() + collisionObject.getWidth() &&
+				start.y < collisionObject.getY()){
+			//If line end is not located under the upper border, object can't be hit
+			if(end.y < collisionObject.getY()){
+				return null;
+			}
+			
+			//Special case if aimed right up
+			else if(angle == 90.0f){
+				return new Hit(collisionObject, new Vector2(start.x, collisionObject.getY()));
+			}
+			//The distance to the object from the start of line
+			float distanceToObject = collisionObject.getY() - start.y;
+			//Calculate the x-position of line when the 
+			//y-position is equal to objects top border y-position
+			float positionX = (float)(distanceToObject * 
+					Math.tan(angle * Math.PI / 180)) + 
+					start.x;
+			if(positionX >= collisionObject.getX() &&
+					positionX <= collisionObject.getX() + collisionObject.getWidth()){
+				Gdx.app.log("CollisionUtil", "Collision at - X: " + positionX + 
+						" Y: " + (collisionObject.getY()));
+				return new Hit(collisionObject, 
+						new Vector2(positionX, 
+								collisionObject.getY()
+						));
+			} else {
+				return null;
+			}
+		}
+		
+		//When coming in from the bottom left side
+		else if(start.x < collisionObject.getX() &&
+				start.y < collisionObject.getY()){
+			//If line end is outside object on bottom or right side
+			//object can't be hit
+			if(end.x < collisionObject.getX() ||
+				end.y < collisionObject.getY()){
+				return null;
+			}
+			//Check 
+			float startToCornerAngle = MathUtil.angle(start, 
+					collisionObject.getX(), 
+					collisionObject.getY());
+			//If line angle and angle from start point to corner
+			//is equal, then line hits the corner
+			if(angle == startToCornerAngle){
+				return new Hit(collisionObject, new Vector2(
+						collisionObject.getX(),
+						collisionObject.getY()));
+			} 
+			//When line angle is smaller than the angle from
+			//start point to corner then line must hit the bottom of the object
+			else if(angle < startToCornerAngle){
+				//The distance to the objects y position from start point
+				float distanceToObject =  collisionObject.getY() - start.y;
+				
+				//Calculate the x-position of line when the 
+				//y-position is equal to objects top border y-position
+				float positionX = (float)(distanceToObject * 
+						Math.tan(angle * Math.PI / 180)) + 
+						start.x;
+				System.out.println("Post x " + positionX);
+				if(positionX >= collisionObject.getX() &&
+						positionX <= collisionObject.getX() + collisionObject.getWidth()){
+					Gdx.app.log("CollisionUtil", "Collision at - X: " + positionX + 
+							" Y: " + (collisionObject.getY()));
+					return new Hit(collisionObject, 
+							new Vector2(positionX, 
+									collisionObject.getY()));
+				} else {
+					return null;
+				}
+			}
+			//When line angle is bigger than the angle from
+			//start point to corner then line must hit the left side of object
+			else{
+				//The distance to the objects x position from start point
+				float distanceToObject = collisionObject.getX() - start.x;
+				System.out.println("Distance " + distanceToObject + 
+						" " + start.y + " " + (float)(distanceToObject * 
+								Math.tan(angle * Math.PI / 180)));
+				//Calculate the y-position of line when the 
+				//x-position is equal to objects right border x-position
+				float positionY = (float)(distanceToObject * 
+						Math.tan(angle * Math.PI / 180)) + 
+						start.y;
+				System.out.println("position y: " + positionY);
+				if(positionY >= collisionObject.getY() &&
+						positionY <= collisionObject.getY() + collisionObject.getHeight()){
+					Gdx.app.log("CollisionUtil", "Collision at - X: " + 
+							(collisionObject.getX()) + 
+							" Y: " + positionY);
+					return new Hit(collisionObject, 
+							new Vector2(collisionObject.getX(), 
+									positionY));
+				} else {
+					return null;
+				}
+			}
+		}
+		
+		//When line comes in from the left
+		else if(start.y >= collisionObject.getY() &&
+				start.y <= collisionObject.getY() + collisionObject.getHeight() &&
+				start.x < collisionObject.getX()){
+			
+			//If line end is not located on the right 
+			//of the left border, object can't be hit
+			if(end.x < collisionObject.getX()){
+				return null;
+			}
+			//The distance to the objects x position from start point
+			float distanceToObject = collisionObject.getX() - start.x;
+			
+			//Calculate the x-position of line when the 
+			//y-position is equal to objects y-position
+			float positionY = (float)(distanceToObject * 
+					Math.tan(angle * Math.PI / 180)) + 
+					start.y;
+			if(positionY >= collisionObject.getY() &&
+					positionY <= collisionObject.getY() + collisionObject.getHeight()){
+				Gdx.app.log("CollisionUtil", "Collision at - X: " + 
+						collisionObject.getX() + 
+						" Y: " + positionY);
+				return new Hit(collisionObject, 
+						new Vector2(collisionObject.getX(), 
+								positionY));
+			} else {
+				return null;
+			}
+		}
+		
+		//When coming in from the top left side
+		else if(start.x < collisionObject.getX() &&
+				start.y > collisionObject.getY() + collisionObject.getHeight()){
+			//If line end is outside object on top or right side
+			//object can't be hit
+			if(end.x < collisionObject.getX() ||
+				end.y > collisionObject.getY() + collisionObject.getHeight()){
+				return null;
+			}
+			//Check 
+			float startToCornerAngle = MathUtil.angle(start, 
+					collisionObject.getX(), 
+					collisionObject.getY() + collisionObject.getHeight());
+			//If line angle and angle from start point to corner
+			//is equal, then line hits the corner
+			if(angle == startToCornerAngle ){
+				return new Hit(collisionObject, new Vector2(
+						collisionObject.getX(),
+						collisionObject.getY() + collisionObject.getHeight()));
+			} 
+			//When line angle is bigger than the angle from
+			//start point to corner then line must hit the top of the object
+			else if(angle > startToCornerAngle){
+				//The distance to the objects y position from start point
+				float distanceToObject = start.y - collisionObject.getY() - collisionObject.getHeight();
+				//Calculate the x-position of line when the 
+				//y-position is equal to objects top border y-position
+				float positionX = (float)((-1) * distanceToObject * 
+						Math.tan(angle * Math.PI / 180)) + 
+						start.x;
+				System.out.println("Position X " + positionX);
+				if(positionX >= collisionObject.getX() &&
+						positionX <= collisionObject.getX() + collisionObject.getWidth()){
+					Gdx.app.log("CollisionUtil", "Collision at - X: " + positionX + 
+							" Y: " + (collisionObject.getY() + collisionObject.getHeight()) + "from");
+					return new Hit(collisionObject, 
+							new Vector2(positionX, 
+									collisionObject.getY() + collisionObject.getHeight()
+							));
+				} else {
+					return null;
+				}
+			}
+			//When line angle is smaller than the angle from
+			//start point to corner then line must hit the left side of object
+			else{
+				//The distance to the objects x position from start point
+				float distanceToObject = collisionObject.getX() - start.x;
+				
+				//Calculate the y-position of line when the 
+				//x-position is equal to objects right border x-position
+				float positionY = (float)(distanceToObject * 
+						Math.tan(angle * Math.PI / 180)) + 
+						start.y;
+				if(positionY >= collisionObject.getY() &&
+						positionY <= collisionObject.getY() + collisionObject.getHeight()){
+					Gdx.app.log("CollisionUtil", "Collision at - X: " + 
+							(collisionObject.getX()) + 
+							" Y: " + positionY);
+					return new Hit(collisionObject, 
+							new Vector2(collisionObject.getX(), 
+									positionY));
+				} else {
+					return null;
+				}
+			}
+		}
 		
 		return null;
 	}

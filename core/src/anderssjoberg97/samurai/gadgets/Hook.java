@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import anderssjoberg97.samurai.characters.Player;
 import anderssjoberg97.samurai.collision.CollisionUtil;
+import anderssjoberg97.samurai.collision.Hit;
 import anderssjoberg97.samurai.collision.Collidable;
 import anderssjoberg97.samurai.util.MathUtil;
 import anderssjoberg97.samurai.world.World;
@@ -45,8 +46,10 @@ public class Hook implements Gadget {
 	//Hook state
 	private HookState hookState;
 	
-	//Where hook has hit
-	Vector2 hitPosition;
+	//Encapsulates where hook hit and what it hit
+	Hit hit;
+	//Temporary value for hit to be compared to
+	Hit tempHit;
 	
 	//Rope thickness
 	private float thickness;
@@ -119,10 +122,10 @@ public class Hook implements Gadget {
 							(float)Math.sin(angle * Math.PI / 180) * 
 							(length + shootingSpeed * delta);
 				//Check if hook collides
-				Collidable hookable = checkForCollision(farEnd, nextFrameEnd, delta);
-				if(hookable != null){
+				Hit collidable = checkForCollision(farEnd, nextFrameEnd, delta);
+				if(collidable != null){
 					//Locate where the hook hit
-					CollisionUtil.locateHit(hookable, farEnd, nextFrameEnd, angle);
+					//CollisionUtil.calculateHit(collidable, farEnd, nextFrameEnd, angle);
 				} else{
 					length += shootingSpeed * delta;
 				}
@@ -182,28 +185,39 @@ public class Hook implements Gadget {
 	 * @param nextFrame Position in the next frame
 	 * @return Returns the a Hookable object if colliding, otherwise null
 	 */
-	private Collidable checkForCollision(Vector2 thisFrame, Vector2 nextFrame, float delta){
+	private Hit checkForCollision(Vector2 thisFrame, Vector2 nextFrame, float delta){
+		//Make sure these are null
+		//so that false positives won't happen
+		hit = null;
+		tempHit = null;
+		
 		//All hookables in world
-		ArrayList<ArrayList<ArrayList<Collidable>>> allHookables = world.getHookables();
+		ArrayList<ArrayList<ArrayList<Collidable>>> allCollidables = world.getHookables();
 		
 		//Chunks to look in
 		ArrayList<Integer[]> chunks = CollisionUtil.getChunks(thisFrame, nextFrame);
 		
 		//Look in chunks
 		for(int chunkIndex = 0; chunkIndex < chunks.size(); ++chunkIndex){
-			ArrayList<Collidable> hookables = 
-					allHookables.get(chunks.get(chunkIndex)[0]).
+			ArrayList<Collidable> collidables = 
+					allCollidables.get(chunks.get(chunkIndex)[0]).
 					get(chunks.get(chunkIndex)[1]);
-			for(Collidable hookable : hookables){
-				//Primitive hit detection
-				if(nextFrame.x >= hookable.getX() - shootingSpeed * delta && 
-						nextFrame.x <= hookable.getX() + hookable.getWidth() + shootingSpeed * delta &&
-						nextFrame.y >= hookable.getY() - shootingSpeed * delta && 
-						nextFrame.y <= hookable.getY() + hookable.getHeight() + shootingSpeed * delta){
-					//Do further analysis
-					
-					return hookable;
-				}
+			for(Collidable collidable : collidables){
+				//Hit detection
+				tempHit = CollisionUtil.calculateHit(collidable, thisFrame, nextFrame);
+				if(tempHit != null){
+					if(hit == null){
+						hit = tempHit;
+					} else{
+						if(thisFrame.dst(tempHit.getPosition()) < thisFrame.dst(hit.getPosition())){
+							hit = tempHit;
+						}
+					}
+				}	
+			}
+			//Return if collision was detected in the chunk
+			if(hit != null){
+				return hit;
 			}
 		}
 		
