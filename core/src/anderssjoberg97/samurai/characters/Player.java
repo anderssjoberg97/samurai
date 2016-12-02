@@ -172,4 +172,13 @@ public class Player {
 		hook.dispose();
 		
 	}
+	
+	/**
+	 * Sets the position of the player
+	 * @param position Position to be set
+	 */
+	public void setPosition(Vector2 position) {
+		this.position = position;
+		
+	}
 }

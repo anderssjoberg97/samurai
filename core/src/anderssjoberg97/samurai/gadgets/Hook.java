@@ -82,8 +82,8 @@ public class Hook implements Gadget {
 	 */
 	public Hook(World world, Player player){
 		//Semi-constants
-		range = 4;
-		shootingSpeed = 10;
+		range = 10;
+		shootingSpeed = 100;
 		pullingSpeed = 30;
 		thickness = 0.1f;
 		
@@ -114,7 +114,7 @@ public class Hook implements Gadget {
 	public void update(float delta){
 		if(hookState == HookState.SHOOTING){
 			if(length < range - shootingSpeed * delta){
-				//Calculate where farend will be in the next frame
+				//Calculate where far end will be in the next frame
 				nextFrameEnd.x = nearEnd.x + 
 							(float)Math.cos(angle * Math.PI / 180) * 
 							(length + shootingSpeed * delta);
@@ -124,8 +124,14 @@ public class Hook implements Gadget {
 				//Check if hook collides
 				Hit collidable = checkForCollision(farEnd, nextFrameEnd, delta);
 				if(collidable != null){
-					//Locate where the hook hit
-					//CollisionUtil.calculateHit(collidable, farEnd, nextFrameEnd, angle);
+					
+					float distanceToCollision = farEnd.dst(collidable.getPosition());
+					delta -= distanceToCollision / shootingSpeed;
+					length += distanceToCollision;
+					
+					hookState = HookState.PULLING;
+					
+					
 				} else{
 					length += shootingSpeed * delta;
 				}
@@ -136,7 +142,20 @@ public class Hook implements Gadget {
 			}
 		}
 		
-		if(hookState == HookState.RETRACTING){
+		if(hookState == HookState.PULLING){
+			if(length > pullingSpeed * delta){
+				length -= pullingSpeed * delta;
+				nearEnd.x = farEnd.x - (float)Math.cos(angle * Math.PI / 180) * length;
+				nearEnd.y = farEnd.y - (float)Math.sin(angle * Math.PI / 180) * length;
+				player.setPosition(nearEnd);
+			} else {
+				delta -= length / pullingSpeed;
+				length = 0;
+				nearEnd.x = farEnd.x;
+				nearEnd.y = farEnd.y;
+				hookState = HookState.RETRACTED;
+			}
+		} else if(hookState == HookState.RETRACTING){
 			if(length > shootingSpeed * delta){
 				length -= shootingSpeed * delta;				
 			} else if(length <= shootingSpeed * delta){
@@ -145,6 +164,7 @@ public class Hook implements Gadget {
 				hookState = HookState.RETRACTED;
 			}
 		}
+		
 		if(hookState != HookState.RETRACTED){
 			farEnd.x = nearEnd.x + (float)Math.cos(angle * Math.PI / 180) * length;
 			farEnd.y = nearEnd.y + (float)Math.sin(angle * Math.PI / 180) * length;

@@ -27,12 +27,18 @@ public class MathUtil {
 			} else {
 				return - 90f;
 			}
-		} else if(differenceX < 0) {
+		} else if(differenceX >= 0 && differenceY >= 0 ) {
 			return (float) Math.atan(differenceY / differenceX) * 
-					180 / (float)Math.PI + 180;
+					180 / (float)Math.PI;
+		} else if(differenceX < 0 && differenceY >= 0 ){
+			return (float) Math.atan(differenceY / differenceX) * 
+					180 / (float) Math.PI + 180;
+		} else if(differenceX < 0 && differenceY < 0) {
+			return (float) Math.atan(differenceY / differenceX) * 
+					180 / (float) Math.PI + 180;
 		} else {
 			return (float) Math.atan(differenceY / differenceX) * 
-					180 / (float) Math.PI;
+					180 / (float) Math.PI + 360;
 		}
 	}
 	

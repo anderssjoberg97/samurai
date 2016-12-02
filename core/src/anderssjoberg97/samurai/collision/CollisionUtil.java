@@ -155,22 +155,28 @@ public class CollisionUtil {
 		if(start.x >= collisionObject.getX() &&
 				start.x <= collisionObject.getX() + collisionObject.getWidth() &&
 				start.y > collisionObject.getY() + collisionObject.getHeight()){
+			System.out.println("Top");
 			//If line end is not located under the upper border, object can't be hit
 			if(end.y > collisionObject.getY() + collisionObject.getHeight()){
+				System.out.println("OVER " + end.x + " " + end.y);
 				return null;
 			}
-			
 			//Special case if aimed right down
 			else if(angle == 270.0f){
 				return new Hit(collisionObject, new Vector2(start.x, collisionObject.getY()));
 			}
+			
+			System.out.println("Start x: " + start.x + " y: " + start.y);
+			
 			//The distance to the object from the start of line
 			float distanceToObject = start.y - collisionObject.getY() - collisionObject.getHeight();
+			System.out.println("Vertical distance " + distanceToObject);
 			//Calculate the x-position of line when the 
 			//y-position is equal to objects top border y-position
-			float positionX = (float)((-1) * distanceToObject * 
+			float positionX = (float)((-1) * distanceToObject / 
 					Math.tan(angle * Math.PI / 180)) + 
 					start.x;
+			System.out.println("Tan " + (angle) + " = " + Math.tan(angle * Math.PI / 180));
 			if(positionX >= collisionObject.getX() &&
 					positionX <= collisionObject.getX() + collisionObject.getWidth()){
 				Gdx.app.log("CollisionUtil", "Collision at - X: " + positionX + 
@@ -212,7 +218,7 @@ public class CollisionUtil {
 				
 				//Calculate the x-position of line when the 
 				//y-position is equal to objects top border y-position
-				float positionX = (float)((-1) * distanceToObject * 
+				float positionX = (float)((-1) * distanceToObject / 
 						Math.tan(angle * Math.PI / 180)) + 
 						start.x;
 				if(positionX >= collisionObject.getX() &&
@@ -311,7 +317,7 @@ public class CollisionUtil {
 				
 				//Calculate the x-position of line when the 
 				//y-position is equal to objects top border y-position
-				float positionX = (float)(distanceToObject * 
+				float positionX = (float)(distanceToObject / 
 						Math.tan(angle * Math.PI / 180)) + 
 						start.x;
 				if(positionX >= collisionObject.getX() &&
@@ -367,7 +373,7 @@ public class CollisionUtil {
 			float distanceToObject = collisionObject.getY() - start.y;
 			//Calculate the x-position of line when the 
 			//y-position is equal to objects top border y-position
-			float positionX = (float)(distanceToObject * 
+			float positionX = (float)(distanceToObject / 
 					Math.tan(angle * Math.PI / 180)) + 
 					start.x;
 			if(positionX >= collisionObject.getX() &&
@@ -411,7 +417,7 @@ public class CollisionUtil {
 				
 				//Calculate the x-position of line when the 
 				//y-position is equal to objects top border y-position
-				float positionX = (float)(distanceToObject * 
+				float positionX = (float)(distanceToObject / 
 						Math.tan(angle * Math.PI / 180)) + 
 						start.x;
 				System.out.println("Post x " + positionX);
@@ -512,7 +518,7 @@ public class CollisionUtil {
 				float distanceToObject = start.y - collisionObject.getY() - collisionObject.getHeight();
 				//Calculate the x-position of line when the 
 				//y-position is equal to objects top border y-position
-				float positionX = (float)((-1) * distanceToObject * 
+				float positionX = (float)((-1) * distanceToObject / 
 						Math.tan(angle * Math.PI / 180)) + 
 						start.x;
 				System.out.println("Position X " + positionX);
