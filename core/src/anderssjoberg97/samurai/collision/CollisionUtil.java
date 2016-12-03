@@ -31,6 +31,7 @@ public class CollisionUtil {
 		Integer[] startChunk = new Integer[2];
 		startChunk[0] = (int)vector1.x / World.CHUNK_SIZE;
 		startChunk[1] = (int)vector1.y / World.CHUNK_SIZE;
+		
 		Integer[] endChunk = new Integer[2];
 		endChunk[0] = (int)vector2.x / World.CHUNK_SIZE;
 		endChunk[1] = (int)vector2.y / World.CHUNK_SIZE;
@@ -138,6 +139,18 @@ public class CollisionUtil {
 			} else {
 				--currentX;
 			}
+		}
+		
+		//Remove all nonexistent chunks
+		int biggestX = (int)Math.ceil(World.WORLD_WIDTH / World.CHUNK_SIZE);
+		int biggestY = (int)Math.ceil(World.WORLD_HEIGHT / World.CHUNK_SIZE);
+		for(int i = chunks.size() - 1; 
+				chunks.get(i)[0] < 0 || 
+				chunks.get(i)[0] > biggestX || 
+				chunks.get(i)[1] < 0 || 
+				chunks.get(i)[1] > biggestY;
+				--i){
+			chunks.remove(i);
 		}
 		return chunks;
 	}
