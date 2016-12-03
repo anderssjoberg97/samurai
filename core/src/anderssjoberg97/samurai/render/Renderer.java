@@ -129,7 +129,6 @@ public class Renderer {
 		batch.disableBlending();
 		map.draw(batch);
 		batch.enableBlending();
-		player.getSprite().draw(batch);
 		player.render(batch);
 		batch.end();
 		
@@ -149,6 +148,7 @@ public class Renderer {
 			++chunkX;
 			chunkY = 0;
 		}
+		player.render(shapeRenderer);
 		shapeRenderer.end();
 		
 		

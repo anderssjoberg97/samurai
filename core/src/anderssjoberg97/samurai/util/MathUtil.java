@@ -21,25 +21,7 @@ public class MathUtil {
 	public static float angle(Vector2 vector1, Vector2 vector2){
 		float differenceX = vector2.x - vector1.x;
 		float differenceY = vector2.y - vector1.y;
-		if(differenceX == 0.0f){
-			if(differenceY >= 0.0f){
-				return 90f;
-			} else {
-				return - 90f;
-			}
-		} else if(differenceX >= 0 && differenceY >= 0 ) {
-			return (float) Math.atan(differenceY / differenceX) * 
-					180 / (float)Math.PI;
-		} else if(differenceX < 0 && differenceY >= 0 ){
-			return (float) Math.atan(differenceY / differenceX) * 
-					180 / (float) Math.PI + 180;
-		} else if(differenceX < 0 && differenceY < 0) {
-			return (float) Math.atan(differenceY / differenceX) * 
-					180 / (float) Math.PI + 180;
-		} else {
-			return (float) Math.atan(differenceY / differenceX) * 
-					180 / (float) Math.PI + 360;
-		}
+		return angle(differenceX, differenceY);
 	}
 	
 	/**
@@ -52,18 +34,35 @@ public class MathUtil {
 	public static float angle(Vector2 vector1, float vector2X, float vector2Y){
 		float differenceX = vector2X - vector1.x; 
 		float differenceY = vector2Y - vector1.y;
+		return angle(differenceX, differenceY);
+	}
+	
+	/**
+	 * Helper method for angle that calculates the angle from difference.
+	 * @param differenceX Horizontal difference between points
+	 * @param differenceY Vertical difference between points
+	 * @return The angle between 0 inclusive and 360 exclusive
+	 */
+	public static float angle(float differenceX, float differenceY){
 		if(differenceX == 0.0f){
 			if(differenceY >= 0.0f){
 				return 90f;
 			} else {
 				return - 90f;
 			}
-		} else if(differenceX < 0) {
+		} else if(differenceX >= 0 && differenceY >= 0 ) {
+			
 			return (float) Math.atan(differenceY / differenceX) * 
-					180 / (float)Math.PI + 180;
-		} else {
-			return (float) Math.atan(differenceY / differenceX) * 
+					180 / (float)Math.PI;
+		} else if(differenceX < 0 && differenceY >= 0 ){
+			return 180 + (float) Math.atan(differenceY / differenceX) * 
 					180 / (float) Math.PI;
+		} else if(differenceX < 0 && differenceY < 0) {
+			return 180 + (float) Math.atan(differenceY / differenceX) * 
+					180 / (float) Math.PI;
+		} else {
+			return (360 + (float) Math.atan(differenceY / differenceX) * 
+					180 / (float) Math.PI);
 		}
 	}
 }

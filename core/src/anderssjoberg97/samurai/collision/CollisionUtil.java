@@ -43,7 +43,7 @@ public class CollisionUtil {
 		//If line never passes a vertical border of chunk
 		//get all the chunks above or under the startchunk
 		if(startChunk[0] == endChunk[0] && startChunk[1] < endChunk[1]){
-			for(int i = startChunk[1] + 1; i <= endChunk[1]; ++i){
+			for(int i = startChunk[1]; i <= endChunk[1]; ++i){
 				Integer[] tempChunk = new Integer[2];
 				tempChunk[0] = startChunk[0];
 				tempChunk[1] = i;
@@ -51,7 +51,7 @@ public class CollisionUtil {
 			}
 			return chunks;
 		} else if(startChunk[0] == endChunk[0] && startChunk[1] > endChunk[1]){
-			for(int i = endChunk[1]; i < startChunk[1]; ++i){
+			for(int i = startChunk[1]; i >= endChunk[1]; --i){
 				Integer[] tempChunk = new Integer[2];
 				tempChunk[0] = startChunk[0];
 				tempChunk[1] = i;
@@ -118,6 +118,7 @@ public class CollisionUtil {
 				}
 			} else {
 				while(true){
+					System.out.print("In loop");
 					chunks.add(new Integer[]{currentX, currentY});
 					if(currentY == endChunk[1]){
 						break;
@@ -149,6 +150,7 @@ public class CollisionUtil {
 	 * @return A Hit object if object was hit, otherwise null
 	 */
 	public static Hit calculateHit(Collidable collisionObject, Vector2 start, Vector2 end) {
+		System.out.println("Calculating");
 		//Line angle
 		float angle = MathUtil.angle(start, end);
 		//When line comes in from the top
@@ -494,6 +496,7 @@ public class CollisionUtil {
 		//When coming in from the top left side
 		else if(start.x < collisionObject.getX() &&
 				start.y > collisionObject.getY() + collisionObject.getHeight()){
+			System.out.println("Top left side");
 			//If line end is outside object on top or right side
 			//object can't be hit
 			if(end.x < collisionObject.getX() ||
@@ -504,6 +507,8 @@ public class CollisionUtil {
 			float startToCornerAngle = MathUtil.angle(start, 
 					collisionObject.getX(), 
 					collisionObject.getY() + collisionObject.getHeight());
+			System.out.println("Start to corner angle : " + startToCornerAngle);
+			System.out.println("Line angle: " + angle);
 			//If line angle and angle from start point to corner
 			//is equal, then line hits the corner
 			if(angle == startToCornerAngle ){
@@ -514,8 +519,11 @@ public class CollisionUtil {
 			//When line angle is bigger than the angle from
 			//start point to corner then line must hit the top of the object
 			else if(angle > startToCornerAngle){
+				System.out.println("angle " + angle + " other " + startToCornerAngle);
 				//The distance to the objects y position from start point
 				float distanceToObject = start.y - collisionObject.getY() - collisionObject.getHeight();
+				System.out.println("Distance " + distanceToObject);
+				
 				//Calculate the x-position of line when the 
 				//y-position is equal to objects top border y-position
 				float positionX = (float)((-1) * distanceToObject / 

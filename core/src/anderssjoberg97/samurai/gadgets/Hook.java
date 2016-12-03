@@ -10,6 +10,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 
@@ -84,7 +85,7 @@ public class Hook implements Gadget {
 		//Semi-constants
 		range = 10;
 		shootingSpeed = 100;
-		pullingSpeed = 30;
+		pullingSpeed = 50;
 		thickness = 0.1f;
 		
 		
@@ -121,14 +122,17 @@ public class Hook implements Gadget {
 				nextFrameEnd.y = nearEnd.y + 
 							(float)Math.sin(angle * Math.PI / 180) * 
 							(length + shootingSpeed * delta);
+				System.out.println("Farend " + farEnd.x + "f, " + farEnd.y + "f");
+				System.out.println("Nextframe " + nextFrameEnd.x + "f, " + nextFrameEnd.y + "f");
 				//Check if hook collides
-				Hit collidable = checkForCollision(farEnd, nextFrameEnd, delta);
+				System.out.println("Calling function");
+				Hit collidable = checkForCollision(farEnd, nextFrameEnd);
 				if(collidable != null){
 					
 					float distanceToCollision = farEnd.dst(collidable.getPosition());
 					delta -= distanceToCollision / shootingSpeed;
 					length += distanceToCollision;
-					
+					farEnd = collidable.getPosition();
 					hookState = HookState.PULLING;
 					
 					
@@ -136,9 +140,33 @@ public class Hook implements Gadget {
 					length += shootingSpeed * delta;
 				}
 			} else if(length >= range - shootingSpeed * delta){
-				delta -= (range - length) / shootingSpeed;
-				length = range;
-				hookState = HookState.RETRACTING;
+				float tempDelta = delta - (range - length) / shootingSpeed;
+				//Calculate where far end will be in the next frame
+				nextFrameEnd.x = nearEnd.x + 
+							(float)Math.cos(angle * Math.PI / 180) * 
+							(length + shootingSpeed * tempDelta);
+				nextFrameEnd.y = nearEnd.y + 
+							(float)Math.sin(angle * Math.PI / 180) * 
+							(length + shootingSpeed * tempDelta);
+				
+				System.out.println("Farend " + farEnd.x + "f, " + farEnd.y + "f");
+				System.out.println("Nextframe " + nextFrameEnd.x + "f, " + nextFrameEnd.y + "f");
+				//Check for collisions
+				Hit collidable = checkForCollision(farEnd, nextFrameEnd);
+				if(collidable != null){
+					
+					float distanceToCollision = farEnd.dst(collidable.getPosition());
+					delta -= distanceToCollision / shootingSpeed;
+					length += distanceToCollision;
+					farEnd = collidable.getPosition();
+					hookState = HookState.PULLING;
+					
+					
+				} else{
+					delta = tempDelta;
+					length = range;
+					hookState = HookState.RETRACTING;
+				}
 			}
 		}
 		
@@ -154,6 +182,7 @@ public class Hook implements Gadget {
 				nearEnd.x = farEnd.x;
 				nearEnd.y = farEnd.y;
 				hookState = HookState.RETRACTED;
+				System.out.println("-------RETRACTED-----");
 			}
 		} else if(hookState == HookState.RETRACTING){
 			if(length > shootingSpeed * delta){
@@ -162,6 +191,7 @@ public class Hook implements Gadget {
 				delta -= length / shootingSpeed;
 				length = 0;
 				hookState = HookState.RETRACTED;
+				System.out.println("-------RETRACTED-----");
 			}
 		}
 		
@@ -200,12 +230,22 @@ public class Hook implements Gadget {
 	}
 	
 	/**
+	 * Renders the hook
+	 */
+	@Override
+	public void render(ShapeRenderer shapeRenderer){
+		if(hookState != HookState.RETRACTED){
+			shapeRenderer.line(nearEnd, farEnd);
+		}
+	}
+	
+	/**
 	 * Checks if hook has hit anything
 	 * @param thisFrame Position in the current frame
 	 * @param nextFrame Position in the next frame
 	 * @return Returns the a Hookable object if colliding, otherwise null
 	 */
-	private Hit checkForCollision(Vector2 thisFrame, Vector2 nextFrame, float delta){
+	private Hit checkForCollision(Vector2 thisFrame, Vector2 nextFrame){
 		//Make sure these are null
 		//so that false positives won't happen
 		hit = null;

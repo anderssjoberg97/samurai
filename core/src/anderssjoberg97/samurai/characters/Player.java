@@ -10,6 +10,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 import anderssjoberg97.samurai.gadgets.Gadget;
@@ -77,7 +78,21 @@ public class Player {
 	 * @param batch SpriteBatch helper
 	 */
 	public void render(SpriteBatch batch){
+		sprite.draw(batch);
 		hook.render(batch);
+	}
+	
+	/**
+	 * Renders the player and gadgets
+	 * @param shapeRenderer Shaperenderer
+	 */
+	public void render(ShapeRenderer shapeRenderer){
+		shapeRenderer.rect(position.x - 0.15f, position.y - 0.5f, 
+				0.15f, 0.5f, 
+				0.3f, 1, 
+				1, 1, 
+				facingDirection);
+		hook.render(shapeRenderer);
 	}
 	
 	/**
