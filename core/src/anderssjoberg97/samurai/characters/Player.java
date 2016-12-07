@@ -39,7 +39,10 @@ public class Player {
 	//Player sprite texture
 	private Sprite sprite;
 	
-	//Gadgets and weapons
+	//Weapons
+	private ArrayList<Weapons> weapons;
+	
+	//Gadgets
 	private ArrayList<Gadget> gadgets;
 	private Hook hook;
 	
@@ -52,7 +55,7 @@ public class Player {
 		position = new Vector2(positionX, positionY);
 		facingDirection = 0;
 		sprite = new Sprite(new Texture(Gdx.files.internal("player/player-main.png")));
-		sprite.setSize(5, 5);
+		sprite.setSize(1, 1);
 		sprite.setOriginCenter();
 		sprite.setCenter(position.x, position.y);
 		
@@ -87,12 +90,13 @@ public class Player {
 	 * @param shapeRenderer Shaperenderer
 	 */
 	public void render(ShapeRenderer shapeRenderer){
-		shapeRenderer.rect(position.x - 0.15f, position.y - 0.5f, 
+		/*shapeRenderer.rect(position.x - 0.15f, position.y - 0.5f, 
 				0.15f, 0.5f, 
 				0.3f, 1, 
 				1, 1, 
-				facingDirection);
-		hook.render(shapeRenderer);
+				facingDirection);*/
+		//hook.render(shapeRenderer);
+		
 	}
 	
 	/**

@@ -30,7 +30,7 @@ import anderssjoberg97.samurai.world.World;
  */
 public class Renderer {
 	//Renderer constants
-	static final int CAMERA_SPAN_HEIGHT = 30;
+	static final int CAMERA_SPAN_HEIGHT = 10;
 	
 	//World
 	private World world;
