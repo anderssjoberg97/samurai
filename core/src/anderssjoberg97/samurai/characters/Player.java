@@ -16,6 +16,8 @@ import com.badlogic.gdx.math.Vector2;
 import anderssjoberg97.samurai.gadgets.Gadget;
 import anderssjoberg97.samurai.gadgets.Hook;
 import anderssjoberg97.samurai.util.MathUtil;
+import anderssjoberg97.samurai.weapons.Sword;
+import anderssjoberg97.samurai.weapons.Weapon;
 import anderssjoberg97.samurai.world.World;
 
 /**
@@ -40,7 +42,8 @@ public class Player {
 	private Sprite sprite;
 	
 	//Weapons
-	private ArrayList<Weapons> weapons;
+	private ArrayList<Weapon> weapons;
+	private int currentWeapon;
 	
 	//Gadgets
 	private ArrayList<Gadget> gadgets;
@@ -59,8 +62,12 @@ public class Player {
 		sprite.setOriginCenter();
 		sprite.setCenter(position.x, position.y);
 		
+		//Gadgets
 		hook = new Hook(this.world, this);
-		
+		//Weapons
+		weapons = new ArrayList<Weapon>();
+		weapons.add(new Sword(this));
+		currentWeapon = 0;
 	}
 	
 	/**
@@ -68,11 +75,15 @@ public class Player {
 	 * @param delta Delta-time
 	 */
 	public void update(float delta){
+		//Update gadgets
 		hook.update(delta);
+		
 		movement(delta);
 		sprite.setCenter(position.x, position.y);
 		sprite.setRotation(facingDirection);
 		
+		//Update weapons
+		weapons.get(currentWeapon).update(delta);
 		
 	}
 	
@@ -97,6 +108,7 @@ public class Player {
 				facingDirection);*/
 		//hook.render(shapeRenderer);
 		
+		weapons.get(currentWeapon).render(shapeRenderer);
 	}
 	
 	/**
@@ -151,6 +163,14 @@ public class Player {
 	}
 	
 	/**
+	 * Gets the player facing direction
+	 * @return Player direction in degrees
+	 */
+	public float getFacingDirection(){
+		return facingDirection;
+	}
+	
+	/**
 	 * Gets the position as a vector
 	 * @return The player position
 	 */
@@ -200,4 +220,6 @@ public class Player {
 		this.position = position;
 		
 	}
+	
+	
 }
